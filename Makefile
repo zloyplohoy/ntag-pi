@@ -3,7 +3,7 @@ install: install-ansible install-application
 
 
 # Install the application locally
-install-local: install-apt-packages install-rust install-ansible install-application-local
+install-local: install-apt-packages install-rust install-ansible-local install-application-local
 
 
 # Install the required system packages with apt
@@ -24,14 +24,25 @@ install-rust:
 install-ansible: install-ansible-venv install-ansible-requirements
 
 
+# Install the application using Ansible installation logic locally
+install-ansible-local: install-ansible-venv install-ansible-requirements-local
+
+
 # Create a Python virtual environment for Ansible installation logic
 install-ansible-venv:
 	@echo "Setting up a virtual environment..."
 	@python3 -m venv install/ansible/venv
 
 
-# Install requirements for Ansible installation logic
+# Install requirements for Ansible installation logic locally
 install-ansible-requirements:
+	@echo "Installing Ansible..."
+	@. install/ansible/venv/bin/activate && \
+		pip install --disable-pip-version-check --quiet --requirement ./install/ansible/requirements.txt
+
+
+# Install requirements for Ansible installation logic
+install-ansible-requirements-local:
 	@echo "Installing Ansible..."
 	@. $$HOME/.cargo/env && \
 		. install/ansible/venv/bin/activate && \
