@@ -1,0 +1,15 @@
+---
+- name: Frontend files are present in /opt
+  become: true
+  ansible.builtin.copy:
+    src: "{{ lookup('env', 'PWD') }}/frontend/uui/build/"
+    dest: /opt/nfc-vcard-frontend/
+    mode: preserve
+
+- name: Custom content directory is present
+  become: true
+  ansible.builtin.file:
+    path: /opt/nfc-vcard-custom
+    state: directory
+    mode: 0777
+...
