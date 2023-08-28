@@ -1,8 +1,10 @@
 # Install the application remotely
 install: install-ansible install-application
 
+
 # Install the application locally
-install-local: install-apt-packages install-rust install-ansible
+install-local: install-apt-packages install-rust install-ansible install-application
+
 
 # Install the required system packages with apt
 # TODO: Suppress apt-get update output
