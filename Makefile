@@ -2,14 +2,19 @@
 install: install-ansible install-application
 
 # Install the application locally
-install-local: install-apt-packages install-ansible
+install-local: install-apt-packages install-rust install-ansible
 
 # Install the required system packages with apt
 # TODO: Suppress apt-get update output
 install-apt-packages:
 	@echo "Installing system packages..."
 	@sudo DEBIAN_FRONTEND=noninteractive apt-get --quiet=2 update
-	@sudo DEBIAN_FRONTEND=noninteractive apt-get --quiet=2 install python3-venv rustc
+	@sudo DEBIAN_FRONTEND=noninteractive apt-get --quiet=2 install python3-venv
+
+
+# Install Rust
+install-rust:
+	@curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sudo sh
 
 
 # Install the application using Ansible installation logic
