@@ -15,7 +15,7 @@ install-apt-packages:
 # Install Rust
 install-rust:
 	@echo "Installing the Rust toolchain..."
-	@curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sudo sh -s -- --quiet
+	@curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sudo sh -s -- -y --quiet
 
 
 # Install the application using Ansible installation logic
