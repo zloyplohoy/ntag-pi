@@ -1,0 +1,8 @@
+[Unit]
+Description=NTAG-Pi
+
+[Service]
+ExecStart=/opt/ntag-pi/venv/bin/python /opt/ntag-pi/src/main.py
+
+[Install]
+WantedBy=multi-user.target

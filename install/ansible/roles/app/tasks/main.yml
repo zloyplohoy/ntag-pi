@@ -5,35 +5,35 @@
     name: python3-dev
     state: present
 
-- name: Ensure backend files are present in /opt
+- name: Ensure application files are present in /opt
   become: true
   ansible.builtin.copy:
-    src: "{{ lookup('env', 'PWD') }}/backend/"
-    dest: /opt/nfc-vcard-backend/
+    src: "{{ lookup('env', 'PWD') }}/src/"
+    dest: /opt/ntag-pi/
     mode: preserve
   notify:
-    - Restart backend service
+    - Restart application service
 
-- name: Ensure wheels is installed in the backend vurtual environment
+- name: Ensure the wheels package is installed in the virtual environment
   become: true
   ansible.builtin.pip:
-    virtualenv: /opt/nfc-vcard-backend/venv
+    virtualenv: /opt/ntag-pi/venv
     virtualenv_command: /usr/bin/python3 -m venv
     name: wheel
 
-- name: Ensure the backend vurtual environment is populated
+- name: Ensure the virtual environment is populated with application requirements
   become: true
   ansible.builtin.pip:
-    virtualenv: /opt/nfc-vcard-backend/venv
+    virtualenv: /opt/ntag-pi/venv
     virtualenv_command: /usr/bin/python3 -m venv
-    requirements: /opt/nfc-vcard-backend/requirements.txt
+    requirements: /opt/ntag-pi/requirements.txt
   notify:
     - Restart backend service
 
 - name: Ensure the backend Systemd unit is present
   become: true
   ansible.builtin.copy:
-    src: nfc-vcard-backend.service
+    src: ntag-pi.service
     dest: /etc/systemd/system/
     mode: preserve
   notify:
@@ -42,7 +42,7 @@
 - name: Ensure the backend service is running
   become: true
   ansible.builtin.systemd:
-    name: nfc-vcard-backend
+    name: ntag-pi
     state: started
     enabled: true
     daemon_reload: true

@@ -1,10 +1,8 @@
 ---
 # TODO: Update all task names
-- name: "Install NFC vCard software bundle"
+- name: Install NTAG-Pi
   hosts: all
   roles:
     - i2c
-    - backend
-    - nginx
-    - frontend
+    - app
 ...

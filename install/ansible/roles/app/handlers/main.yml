@@ -1,7 +1,7 @@
 ---
-- name: Restart backend service
+- name: Restart application service
   become: true
   ansible.builtin.service:
-    name: nfc-vcard-backend
+    name: ntag-pi
     state: restarted
 ...
