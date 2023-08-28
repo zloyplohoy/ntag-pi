@@ -3,7 +3,7 @@ install: install-ansible install-application
 
 
 # Install the application locally
-install-local: install-apt-packages install-rust install-ansible install-application
+install-local: install-apt-packages install-rust install-ansible install-application-local
 
 
 # Install the required system packages with apt
