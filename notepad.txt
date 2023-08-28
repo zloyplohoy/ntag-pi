@@ -1,2 +1,0 @@
-1. Upgrade pip for cryptography
-2.

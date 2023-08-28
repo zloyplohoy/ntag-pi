@@ -28,18 +28,18 @@
     virtualenv_command: /usr/bin/python3 -m venv
     requirements: /opt/ntag-pi/requirements.txt
   notify:
-    - Restart backend service
+    - Restart application service
 
-- name: Ensure the backend Systemd unit is present
+- name: Ensure the application systemd unit is present
   become: true
   ansible.builtin.copy:
     src: ntag-pi.service
     dest: /etc/systemd/system/
     mode: preserve
   notify:
-    - Restart backend service
+    - Restart application service
 
-- name: Ensure the backend service is running
+- name: Ensure the application service is running
   become: true
   ansible.builtin.systemd:
     name: ntag-pi

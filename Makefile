@@ -1,37 +1,51 @@
-# Install the application
-install: install-apt-packages install-ansible
+# Install the application remotely
+install: install-ansible install-application
 
+# Install the application locally
+install-local: install-apt-packages install-ansible
 
 # Install the required system packages with apt
 # TODO: Suppress apt-get update output
 install-apt-packages:
 	@echo "Installing system packages..."
 	@sudo DEBIAN_FRONTEND=noninteractive apt-get --quiet=2 update
-	@sudo DEBIAN_FRONTEND=noninteractive apt-get --quiet=2 install python3-venv
+	@sudo DEBIAN_FRONTEND=noninteractive apt-get --quiet=2 install python3-venv rustc
 
 
 # Install the application using Ansible installation logic
-install-ansible: install-ansible-venv install-ansible-pip install-ansible-playbook
+install-ansible: install-ansible-venv install-ansible-requirements
 
 
 # Create a Python virtual environment for Ansible installation logic
 install-ansible-venv:
-	@echo "Setting up virtual environment..."
+	@echo "Setting up a virtual environment..."
 	@python3 -m venv install/ansible/venv
 
 
 # Install requirements for Ansible installation logic
-install-ansible-pip:
+install-ansible-requirements:
 	@echo "Installing Ansible..."
 	@. install/ansible/venv/bin/activate && \
 		pip install --disable-pip-version-check --quiet --requirement ./install/ansible/requirements.txt
 
 
-# Run the Ansible installation logic playbook
-install-ansible-playbook:
+# Run the Ansible installation logic playbook remotely
+install-application:
+	@echo "Running installation playbook..."
+	@read -p "Enter hostname or IP adddress for Raspberry Pi: [raspberrypi]" remote_hostname && \
+	 remote_hostname=$${remote_hostname:-raspberrypi} && \
+	 read -p "Enter SSH username for Raspberry Pi: [pi]" remote_username && \
+	 remote_username=$${remote_username:-pi} && \
+	 ssh-copy-id $$remote_username@$$remote_hostname > /dev/null 2>&1 && \
+	 . install/ansible/venv/bin/activate && \
+	 ansible-playbook --inventory $$remote_hostname, --user $$remote_username install/ansible/install-ntag-pi.yml
+
+
+# Run the Ansible installation logic playbook locally
+install-application-local:
 	@echo "Running installation playbook..."
 	@. install/ansible/venv/bin/activate; \
-		ansible-playbook --connection local --inventory localhost, install/ansible/install.playbook
+		ansible-playbook --connection local --inventory localhost, install/ansible/install-ntag-pi.yml
 
 
 # Run tests on the repository
@@ -43,7 +57,7 @@ test-install: test-install-ansible
 
 
 # Test Ansible installation logic
-test-install-ansible: test-install-ansible-venv test-install-ansible-pip test-install-ansible-lint
+test-install-ansible: test-install-ansible-venv test-install-ansible-requirements test-install-ansible-lint
 
 
 # Create a Python virtual environment for Ansible installation logic tests
@@ -52,7 +66,7 @@ test-install-ansible-venv:
 
 
 # Install requirements for Ansible installation logic tests
-test-install-ansible-pip:
+test-install-ansible-requirements:
 	@. install/ansible/venv-test/bin/activate && \
 		pip install --disable-pip-version-check --quiet --requirement install/ansible/requirements-test.txt
 
@@ -60,7 +74,7 @@ test-install-ansible-pip:
 # Run Ansible Lint over Ansible installation logic
 test-install-ansible-lint:
 	@. install/ansible/venv-test/bin/activate && \
-		ansible-lint install/ansible/install.playbook
+		ansible-lint install/ansible/install-ntag-pi.yml
 
 
 # Test the backend
