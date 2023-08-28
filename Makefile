@@ -9,7 +9,7 @@ install-local: install-apt-packages install-rust install-ansible
 install-apt-packages:
 	@echo "Installing system packages..."
 	@sudo DEBIAN_FRONTEND=noninteractive apt-get --quiet=2 update
-	@sudo DEBIAN_FRONTEND=noninteractive apt-get --quiet=2 install python3-venv
+	@sudo DEBIAN_FRONTEND=noninteractive apt-get --quiet=2 install python3-venv libssl-dev
 
 
 # Install Rust
@@ -31,7 +31,8 @@ install-ansible-venv:
 # Install requirements for Ansible installation logic
 install-ansible-requirements:
 	@echo "Installing Ansible..."
-	@. install/ansible/venv/bin/activate && \
+	@. $$HOME/.cargo/env && \
+		. install/ansible/venv/bin/activate && \
 		pip install --disable-pip-version-check --quiet --requirement ./install/ansible/requirements.txt
 
 
@@ -39,18 +40,18 @@ install-ansible-requirements:
 install-application:
 	@echo "Running installation playbook..."
 	@read -p "Enter hostname or IP adddress for Raspberry Pi: [raspberrypi]" remote_hostname && \
-	 remote_hostname=$${remote_hostname:-raspberrypi} && \
-	 read -p "Enter SSH username for Raspberry Pi: [pi]" remote_username && \
-	 remote_username=$${remote_username:-pi} && \
-	 ssh-copy-id $$remote_username@$$remote_hostname > /dev/null 2>&1 && \
-	 . install/ansible/venv/bin/activate && \
-	 ansible-playbook --inventory $$remote_hostname, --user $$remote_username install/ansible/install-ntag-pi.yml
+		remote_hostname=$${remote_hostname:-raspberrypi} && \
+		read -p "Enter SSH username for Raspberry Pi: [pi]" remote_username && \
+		remote_username=$${remote_username:-pi} && \
+		ssh-copy-id $$remote_username@$$remote_hostname > /dev/null 2>&1 && \
+		. install/ansible/venv/bin/activate && \
+		ansible-playbook --inventory $$remote_hostname, --user $$remote_username install/ansible/install-ntag-pi.yml
 
 
 # Run the Ansible installation logic playbook locally
 install-application-local:
 	@echo "Running installation playbook..."
-	@. install/ansible/venv/bin/activate; \
+	@. install/ansible/venv/bin/activate && \
 		ansible-playbook --connection local --inventory localhost, install/ansible/install-ntag-pi.yml
 
 
